@@ -1,4 +1,4 @@
-import { Notyf } from "notyf";
+/* import { Notyf } from "notyf";
 import "notyf/notyf.min.css";
 
 const notyf = new Notyf({
@@ -7,7 +7,15 @@ const notyf = new Notyf({
 		x: "center",
 		y: "top",
 	},
-});
+}); */
+
+var notyf = new Notyf({
+	duration: 2000,
+	position: {
+		x: "center",
+		y: "top",
+	},
+}); 
 
 const refsModal = {
 	openModalBtn: document.querySelector("[data-modal-open]"),
