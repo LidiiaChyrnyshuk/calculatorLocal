@@ -1,10 +1,11 @@
-import { Notyf } from "notyf";
+import Notyf from "notyf/notyf.min.js";
+
 const notyf = new Notyf({
 	duration: 2000,
 	position: {
-		x: 'center',
-		y: 'top',
-	}
+		x: "center",
+		y: "top",
+	},
 });
 
 const refsModal = {
@@ -85,7 +86,7 @@ function validateEmail(email) {
 function validatePassword(password) {
 	const hasMinLength = password.length >= 6;
 	const hasDigit = /\d/.test(password);
-	const hasUppercase = /[A-Z]/.test(password); 
+	const hasUppercase = /[A-Z]/.test(password);
 	return hasMinLength && hasDigit && hasUppercase;
 }
 
@@ -198,15 +199,16 @@ async function submitRegistration(event) {
 			window.location.href = `https://weiss.bet/api/v3/auth/partners-player-entry?playerToken=${responseData.playerToken}&deeplink=%2F`;
 		} else if ("errors" in responseData) {
 			console.error("Помилки при реєстрації:", responseData.errors);
-			notyf.error(responseData.errors?.[0]?.message || "Registration error. Please try again.");
-	
+			notyf.error(
+				responseData.errors?.[0]?.message ||
+					"Registration error. Please try again."
+			);
 		} else {
 			throw new Error("Unknown response from the server.");
 		}
 	} catch (error) {
 		console.error("❌ Помилка при запиті:", error);
 		notyf.error("Something went wrong! Try again.");
-		
 	}
 }
 

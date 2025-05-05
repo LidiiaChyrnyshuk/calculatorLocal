@@ -1,4 +1,4 @@
-import { changeLanguage, getBrowserLanguage, translateText } from "./translate";
+import { changeLanguage, getBrowserLanguage, translateText } from "./translate.js";
 import { getExchangeRate, getCurrencyCode } from "./currency.js";
 
 const bonuses = [
