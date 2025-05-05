@@ -12,7 +12,8 @@
 	"author": "",
 	"license": "ISC",
 	"devDependencies": {
-		"parcel": "^2.14.4"
+		"parcel": "^2.14.4",
+		"svgo": "^3.3.2"
 	},
 	"dependencies": {
 		"dotenv": "^16.5.0",
