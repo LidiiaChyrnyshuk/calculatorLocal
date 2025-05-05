@@ -1,20 +1,13 @@
-/* import { Notyf } from "notyf";
-import "notyf/notyf.min.css";
 
-const notyf = new Notyf({
-	duration: 2000,
-	position: {
-		x: "center",
-		y: "top",
-	},
-}); */
-
-var notyf = new Notyf({
-	duration: 2000,
-	position: {
-		x: "center",
-		y: "top",
-	},
+document.addEventListener("DOMContentLoaded", () => {
+	// Ініціалізація Notyf
+	var notyf = new Notyf({
+		duration: 2000,
+		position: {
+			x: "center",
+			y: "top",
+		},
+	});
 }); 
 
 const refsModal = {

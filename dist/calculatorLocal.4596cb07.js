@@ -667,21 +667,15 @@ function hmrAccept(bundle /*: ParcelRequire */ , id /*: string */ ) {
 }
 
 },{}],"aJJ1G":[function(require,module,exports,__globalThis) {
-/* import { Notyf } from "notyf";
-import "notyf/notyf.min.css";
-
-const notyf = new Notyf({
-	duration: 2000,
-	position: {
-		x: "center",
-		y: "top",
-	},
-}); */ var notyf = new Notyf({
-    duration: 2000,
-    position: {
-        x: "center",
-        y: "top"
-    }
+document.addEventListener("DOMContentLoaded", ()=>{
+    // Ініціалізація Notyf
+    var notyf1 = new Notyf({
+        duration: 2000,
+        position: {
+            x: "center",
+            y: "top"
+        }
+    });
 });
 const refsModal = {
     openModalBtn: document.querySelector("[data-modal-open]"),
