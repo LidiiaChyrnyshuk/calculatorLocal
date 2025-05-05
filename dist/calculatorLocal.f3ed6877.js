@@ -667,117 +667,72 @@ function hmrAccept(bundle /*: ParcelRequire */ , id /*: string */ ) {
 }
 
 },{}],"1bQr6":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 var _translateJs = require("./translate.js");
-var _currencyJs = require("./currency.js");
-const bonuses = [
-    {
-        min: 20,
-        max: 499,
-        bonus: 1.0,
-        upto: 1000,
-        fs: 80,
-        depositNum: 1,
-        type: "Welcome Bonus"
-    },
-    {
-        min: 500,
-        max: 999,
-        bonus: 1.1,
-        upto: 3000,
-        fs: 80,
-        depositNum: 1,
-        type: "Boost Bonus"
-    },
-    {
-        min: 1000,
-        max: 3000,
-        bonus: 1.25,
-        upto: 3000,
-        fs: 100,
-        depositNum: 1,
-        type: "High Roller Bonus"
-    },
-    {
-        min: 30,
-        max: 999,
-        bonus: 1.0,
-        upto: 1000,
-        fs: 40,
-        depositNum: 2,
-        type: "Welcome Bonus"
-    },
-    {
-        min: 500,
-        max: 1999,
-        bonus: 1.1,
-        upto: 2000,
-        fs: 40,
-        depositNum: 2,
-        type: "Boost Bonus"
-    },
-    {
-        min: 1000,
-        max: 3000,
-        bonus: 1.25,
-        upto: 2000,
-        fs: 60,
-        depositNum: 2,
-        type: "High Roller Bonus"
-    },
-    {
-        min: 50,
-        max: 999,
-        bonus: 0.75,
-        upto: 1000,
-        fs: 80,
-        depositNum: 3,
-        type: "Welcome Bonus"
-    },
-    {
-        min: 500,
-        max: 1999,
-        bonus: 0.9,
-        upto: 2000,
-        fs: 80,
-        depositNum: 3,
-        type: "Boost Bonus"
-    },
-    {
-        min: 1000,
-        max: 3000,
-        bonus: 1.0,
-        upto: 2000,
-        fs: 100,
-        depositNum: 3,
-        type: "High Roller Bonus"
-    }
-];
+var _bonusesJson = require("../bonuses.json");
+var _bonusesJsonDefault = parcelHelpers.interopDefault(_bonusesJson);
 const refsBonus = {
     depositInput: document.querySelector('[data-ref="deposit"]'),
     bonusOutput: document.querySelector(".calculator-bonus"),
     bonusMessage: document.querySelector('[data-ref="bonusMessage"]'),
     bonusText: document.querySelector(".calculator-text"),
     modalText: document.querySelector(".modal-slot-text"),
-    bonusButton: document.querySelector("[data-modal-open]")
+    bonusButton: document.querySelector("[data-modal-open]"),
+    currencySelect: document.querySelector(".custom-dropdown .selected")
 };
-let exchangeRate = 1;
-let currencyCode = "usd";
-// Ініціалізація
-document.addEventListener("DOMContentLoaded", async ()=>{
+let currencyCode = "USDT"; // Стартова валюта
+// DOMContentLoaded
+document.addEventListener("DOMContentLoaded", ()=>{
     const lang = (0, _translateJs.getBrowserLanguage)();
     (0, _translateJs.changeLanguage)(lang);
-    const currencyData = (0, _currencyJs.getCurrencyCode)();
-    currencyCode = currencyData.code;
-    exchangeRate = await (0, _currencyJs.getExchangeRate)(currencyCode);
-    disableBonusButton();
     refsBonus.depositInput.addEventListener("input", calculateBonus);
     refsBonus.bonusButton.addEventListener("click", ()=>{
         setTimeout(()=>{
             clearBonusInfo();
         }, 1000);
     });
+    const dropdown = document.querySelector(".custom-dropdown");
+    const options = dropdown ? dropdown.querySelector(".options") : null;
+    const currencySelect = refsBonus.currencySelect;
+    const optionItems = dropdown ? dropdown.querySelectorAll(".option") : [];
+    if (dropdown && options && currencySelect) {
+        // Логіка відкриття/закриття дропдауну
+        currencySelect.addEventListener("click", (event)=>{
+            event.stopPropagation();
+            options.style.display = options.style.display === "block" ? "none" : "block";
+        });
+        // Закриття дропдауну при натисканні поза його межами
+        document.addEventListener("click", (event)=>{
+            if (!dropdown.contains(event.target)) options.style.display = "none";
+        });
+        // Обробка кліку по кожній валюті в дропдауні
+        optionItems.forEach((option)=>{
+            option.addEventListener("click", ()=>{
+                const selectedCurrency = option.getAttribute("data-value");
+                const selectedImage = option.querySelector("img").src;
+                currencySelect.innerHTML = `<img src="${selectedImage}" alt="${selectedCurrency}" width="24" height="24" />`;
+                currencyCode = selectedCurrency;
+                calculateBonus();
+                options.style.display = "none";
+            });
+        });
+    }
+    // Викликаємо одразу при завантаженні
+    initCurrencyAndCalculateBonus();
 });
-function calculateBonus() {
+// Додаємо цю функцію нижче
+function initCurrencyAndCalculateBonus() {
+    const selectedImg = refsBonus.currencySelect.querySelector("img");
+    if (selectedImg && selectedImg.alt) currencyCode = selectedImg.alt;
+    else currencyCode = "USDT"; // значення за замовчуванням
+    calculateBonus();
+}
+/* Розрахунок бонусу */ function calculateBonus() {
+    const currentBonuses = (0, _bonusesJsonDefault.default)[currencyCode];
+    if (!currentBonuses) {
+        console.warn("\u041D\u0435\u043C\u0430\u0454 \u0431\u043E\u043D\u0443\u0441\u0456\u0432 \u0434\u043B\u044F \u0432\u0430\u043B\u044E\u0442\u0438:", currencyCode);
+        return;
+    }
     let deposit = refsBonus.depositInput.value.trim();
     if (deposit === "") {
         clearBonusDisplay();
@@ -793,19 +748,19 @@ function calculateBonus() {
         disableBonusButton();
         return;
     }
-    if (deposit < 20) {
+    const minDeposit = Math.min(...currentBonuses.filter((b)=>b.depositNum === 1).map((b)=>b.min));
+    if (deposit < minDeposit) {
         refsBonus.bonusText.setAttribute("data-translate", "minDeposit");
-        refsBonus.bonusText.textContent = (0, _translateJs.translateText)("minDeposit");
+        refsBonus.bonusText.textContent = `${(0, _translateJs.translateText)("minDeposit")} ${minDeposit}`;
         refsBonus.bonusMessage.textContent = "";
         clearBonusDisplay();
         disableBonusButton();
         return;
     }
-    const applicableBonus = bonuses.find((b)=>deposit >= b.min && deposit <= b.max && b.depositNum === 1);
+    const applicableBonus = currentBonuses.find((b)=>deposit >= b.min && deposit <= b.max);
     if (applicableBonus) {
         const bonusAmount = Math.min(deposit * applicableBonus.bonus, applicableBonus.upto);
-        const rounded = Math.round(bonusAmount);
-        const localAmount = Math.round(rounded * exchangeRate);
+        const localAmount = Math.round(bonusAmount);
         const freeSpins = applicableBonus.fs;
         const digits = `${localAmount}`.split("");
         const totalSlots = 4;
@@ -813,14 +768,13 @@ function calculateBonus() {
             length: totalSlots
         }, (_, i)=>digits[i] || "");
         refsBonus.bonusOutput.innerHTML = paddedDigits.map((digit)=>`<span class="calculator-digit">${digit}</span>`).join("");
-        const modalDigits = `${localAmount}`.split("");
         const paddedModalDigits = Array.from({
             length: 4
-        }, (_, i)=>modalDigits[i] || "");
+        }, (_, i)=>digits[i] || "");
         refsBonus.modalText.innerHTML = paddedModalDigits.map((d)=>`<span class="modal-digit">${d}</span>`).join("");
         refsBonus.bonusText.setAttribute("data-translate", "yourBonus");
         refsBonus.bonusText.textContent = (0, _translateJs.translateText)("yourBonus");
-        refsBonus.bonusMessage.textContent = `${localAmount} ${currencyCode.toUpperCase()} + ${freeSpins} FS`;
+        refsBonus.bonusMessage.textContent = `${localAmount} ${currencyCode} + ${freeSpins} FS`;
         enableBonusButton();
     } else {
         clearBonusDisplay();
@@ -851,6 +805,9 @@ function enableBonusButton() {
     refsBonus.bonusButton.style.color = "rgba(255, 255, 255, 1)";
 }
 
-},{"./translate.js":"goUqX","./currency.js":"i3B1s"}]},["eYIK3","1bQr6"], "1bQr6", "parcelRequireff1f", {})
+},{"./translate.js":"goUqX","../bonuses.json":"aWvto","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"aWvto":[function(require,module,exports,__globalThis) {
+module.exports = JSON.parse("{\"USDT\":[{\"min\":20,\"max\":499,\"bonus\":1,\"upto\":1000,\"fs\":80,\"depositNum\":1,\"type\":\"Welcome Bonus\"},{\"min\":500,\"max\":999,\"bonus\":1.1,\"upto\":3000,\"fs\":80,\"depositNum\":1,\"type\":\"Boost Bonus\"},{\"min\":1000,\"max\":3000,\"bonus\":1.25,\"upto\":3000,\"fs\":100,\"depositNum\":1,\"type\":\"High Roller Bonus\"},{\"min\":30,\"max\":999,\"bonus\":1,\"upto\":1000,\"fs\":40,\"depositNum\":2,\"type\":\"Welcome Bonus\"},{\"min\":500,\"max\":1999,\"bonus\":1.1,\"upto\":2000,\"fs\":40,\"depositNum\":2,\"type\":\"Boost Bonus\"},{\"min\":1000,\"max\":3000,\"bonus\":1.25,\"upto\":2000,\"fs\":60,\"depositNum\":2,\"type\":\"High Roller Bonus\"},{\"min\":50,\"max\":999,\"bonus\":0.75,\"upto\":1000,\"fs\":80,\"depositNum\":3,\"type\":\"Welcome Bonus\"},{\"min\":500,\"max\":1999,\"bonus\":0.9,\"upto\":2000,\"fs\":80,\"depositNum\":3,\"type\":\"Boost Bonus\"},{\"min\":1000,\"max\":3000,\"bonus\":1,\"upto\":2000,\"fs\":100,\"depositNum\":3,\"type\":\"High Roller Bonus\"}],\"USD\":[{\"min\":20,\"max\":499,\"bonus\":1,\"upto\":1000,\"fs\":80,\"depositNum\":1,\"type\":\"Welcome Bonus\"},{\"min\":500,\"max\":999,\"bonus\":1.1,\"upto\":3000,\"fs\":80,\"depositNum\":1,\"type\":\"Boost Bonus\"},{\"min\":1000,\"max\":3000,\"bonus\":1.25,\"upto\":3000,\"fs\":100,\"depositNum\":1,\"type\":\"High Roller Bonus\"},{\"min\":30,\"max\":999,\"bonus\":1,\"upto\":1000,\"fs\":40,\"depositNum\":2,\"type\":\"Welcome Bonus\"},{\"min\":500,\"max\":1999,\"bonus\":1.1,\"upto\":2000,\"fs\":40,\"depositNum\":2,\"type\":\"Boost Bonus\"},{\"min\":1000,\"max\":3000,\"bonus\":1.25,\"upto\":2000,\"fs\":60,\"depositNum\":2,\"type\":\"High Roller Bonus\"},{\"min\":50,\"max\":999,\"bonus\":0.75,\"upto\":1000,\"fs\":80,\"depositNum\":3,\"type\":\"Welcome Bonus\"},{\"min\":500,\"max\":1999,\"bonus\":0.9,\"upto\":2000,\"fs\":80,\"depositNum\":3,\"type\":\"Boost Bonus\"},{\"min\":1000,\"max\":3000,\"bonus\":1,\"upto\":2000,\"fs\":100,\"depositNum\":3,\"type\":\"High Roller Bonus\"}],\"EUR\":[{\"min\":18,\"max\":499,\"bonus\":1,\"upto\":1000,\"fs\":80,\"depositNum\":1,\"type\":\"Welcome Bonus\"},{\"min\":500,\"max\":999,\"bonus\":1.1,\"upto\":3000,\"fs\":80,\"depositNum\":1,\"type\":\"Boost Bonus\"},{\"min\":1000,\"max\":3000,\"bonus\":1.25,\"upto\":3000,\"fs\":100,\"depositNum\":1,\"type\":\"High Roller Bonus\"},{\"min\":18,\"max\":999,\"bonus\":1,\"upto\":1000,\"fs\":40,\"depositNum\":2,\"type\":\"Welcome Bonus\"},{\"min\":500,\"max\":1999,\"bonus\":1.1,\"upto\":2000,\"fs\":40,\"depositNum\":2,\"type\":\"Boost Bonus\"},{\"min\":1000,\"max\":3000,\"bonus\":1.25,\"upto\":2000,\"fs\":60,\"depositNum\":2,\"type\":\"High Roller Bonus\"},{\"min\":18,\"max\":999,\"bonus\":0.75,\"upto\":1000,\"fs\":80,\"depositNum\":3,\"type\":\"Welcome Bonus\"},{\"min\":500,\"max\":1999,\"bonus\":0.9,\"upto\":2000,\"fs\":80,\"depositNum\":3,\"type\":\"Boost Bonus\"},{\"min\":1000,\"max\":3000,\"bonus\":1,\"upto\":2000,\"fs\":100,\"depositNum\":3,\"type\":\"High Roller Bonus\"}]}");
+
+},{}]},["eYIK3","1bQr6"], "1bQr6", "parcelRequireff1f", {})
 
 //# sourceMappingURL=calculatorLocal.f3ed6877.js.map

@@ -1,89 +1,9 @@
-import { changeLanguage, getBrowserLanguage, translateText } from "./translate.js";
-import { getExchangeRate, getCurrencyCode } from "./currency.js";
-
-const bonuses = [
-	{
-		min: 20,
-		max: 499,
-		bonus: 1.0,
-		upto: 1000,
-		fs: 80,
-		depositNum: 1,
-		type: "Welcome Bonus",
-	},
-	{
-		min: 500,
-		max: 999,
-		bonus: 1.1,
-		upto: 3000,
-		fs: 80,
-		depositNum: 1,
-		type: "Boost Bonus",
-	},
-	{
-		min: 1000,
-		max: 3000,
-		bonus: 1.25,
-		upto: 3000,
-		fs: 100,
-		depositNum: 1,
-		type: "High Roller Bonus",
-	},
-	{
-		min: 30,
-		max: 999,
-		bonus: 1.0,
-		upto: 1000,
-		fs: 40,
-		depositNum: 2,
-		type: "Welcome Bonus",
-	},
-	{
-		min: 500,
-		max: 1999,
-		bonus: 1.1,
-		upto: 2000,
-		fs: 40,
-		depositNum: 2,
-		type: "Boost Bonus",
-	},
-	{
-		min: 1000,
-		max: 3000,
-		bonus: 1.25,
-		upto: 2000,
-		fs: 60,
-		depositNum: 2,
-		type: "High Roller Bonus",
-	},
-	{
-		min: 50,
-		max: 999,
-		bonus: 0.75,
-		upto: 1000,
-		fs: 80,
-		depositNum: 3,
-		type: "Welcome Bonus",
-	},
-	{
-		min: 500,
-		max: 1999,
-		bonus: 0.9,
-		upto: 2000,
-		fs: 80,
-		depositNum: 3,
-		type: "Boost Bonus",
-	},
-	{
-		min: 1000,
-		max: 3000,
-		bonus: 1.0,
-		upto: 2000,
-		fs: 100,
-		depositNum: 3,
-		type: "High Roller Bonus",
-	},
-];
+import {
+	changeLanguage,
+	getBrowserLanguage,
+	translateText,
+} from "./translate.js";
+import bonuses from "../bonuses.json";
 
 const refsBonus = {
 	depositInput: document.querySelector('[data-ref="deposit"]'),
@@ -92,31 +12,85 @@ const refsBonus = {
 	bonusText: document.querySelector(".calculator-text"),
 	modalText: document.querySelector(".modal-slot-text"),
 	bonusButton: document.querySelector("[data-modal-open]"),
+	currencySelect: document.querySelector(".custom-dropdown .selected"),
 };
 
-let exchangeRate = 1;
-let currencyCode = "usd";
 
-// Ініціалізація
-document.addEventListener("DOMContentLoaded", async () => {
+
+let currencyCode = "USDT"; // Стартова валюта
+
+// DOMContentLoaded
+document.addEventListener("DOMContentLoaded", () => {
 	const lang = getBrowserLanguage();
 	changeLanguage(lang);
-
-	const currencyData = getCurrencyCode();
-	currencyCode = currencyData.code;
-	exchangeRate = await getExchangeRate(currencyCode);
-
-	disableBonusButton();
-
 	refsBonus.depositInput.addEventListener("input", calculateBonus);
 	refsBonus.bonusButton.addEventListener("click", () => {
 		setTimeout(() => {
 			clearBonusInfo();
 		}, 1000);
 	});
+
+	const dropdown = document.querySelector(".custom-dropdown");
+	const options = dropdown ? dropdown.querySelector(".options") : null;
+	const currencySelect = refsBonus.currencySelect;
+	const optionItems = dropdown ? dropdown.querySelectorAll(".option") : [];
+
+	if (dropdown && options && currencySelect) {
+		// Логіка відкриття/закриття дропдауну
+		currencySelect.addEventListener("click", (event) => {
+			event.stopPropagation();
+			options.style.display =
+				options.style.display === "block" ? "none" : "block";
+		});
+
+		// Закриття дропдауну при натисканні поза його межами
+		document.addEventListener("click", (event) => {
+			if (!dropdown.contains(event.target)) {
+				options.style.display = "none";
+			}
+		});
+
+		// Обробка кліку по кожній валюті в дропдауні
+		optionItems.forEach((option) => {
+			option.addEventListener("click", () => {
+				const selectedCurrency = option.getAttribute("data-value");
+				const selectedImage = option.querySelector("img").src;
+
+				currencySelect.innerHTML = `<img src="${selectedImage}" alt="${selectedCurrency}" width="24" height="24" />`;
+				currencyCode = selectedCurrency;
+				calculateBonus();
+				options.style.display = "none";
+			});
+		});
+	}
+
+	// Викликаємо одразу при завантаженні
+	initCurrencyAndCalculateBonus();
 });
 
+// Додаємо цю функцію нижче
+function initCurrencyAndCalculateBonus() {
+	const selectedImg = refsBonus.currencySelect.querySelector("img");
+
+	if (selectedImg && selectedImg.alt) {
+		currencyCode = selectedImg.alt;
+	} else {
+		currencyCode = "USDT"; // значення за замовчуванням
+	}
+
+	calculateBonus();
+}
+
+
+/* Розрахунок бонусу */
 function calculateBonus() {
+	const currentBonuses = bonuses[currencyCode];
+
+	if (!currentBonuses) {
+		console.warn("Немає бонусів для валюти:", currencyCode);
+		return;
+	}
+
 	let deposit = refsBonus.depositInput.value.trim();
 
 	if (deposit === "") {
@@ -136,17 +110,23 @@ function calculateBonus() {
 		return;
 	}
 
-	if (deposit < 20) {
+	const minDeposit = Math.min(
+		...currentBonuses.filter((b) => b.depositNum === 1).map((b) => b.min)
+	);
+
+	if (deposit < minDeposit) {
 		refsBonus.bonusText.setAttribute("data-translate", "minDeposit");
-		refsBonus.bonusText.textContent = translateText("minDeposit");
+		refsBonus.bonusText.textContent = `${translateText(
+			"minDeposit"
+		)} ${minDeposit}`;
 		refsBonus.bonusMessage.textContent = "";
 		clearBonusDisplay();
 		disableBonusButton();
 		return;
 	}
 
-	const applicableBonus = bonuses.find(
-		(b) => deposit >= b.min && deposit <= b.max && b.depositNum === 1
+	const applicableBonus = currentBonuses.find(
+		(b) => deposit >= b.min && deposit <= b.max
 	);
 
 	if (applicableBonus) {
@@ -154,25 +134,23 @@ function calculateBonus() {
 			deposit * applicableBonus.bonus,
 			applicableBonus.upto
 		);
-		const rounded = Math.round(bonusAmount);
-		const localAmount = Math.round(rounded * exchangeRate);
+		const localAmount = Math.round(bonusAmount);
 		const freeSpins = applicableBonus.fs;
 
-const digits = `${localAmount}`.split("");
-const totalSlots = 4;
-const paddedDigits = Array.from(
-	{ length: totalSlots },
-	(_, i) => digits[i] || ""
-);
+		const digits = `${localAmount}`.split("");
+		const totalSlots = 4;
+		const paddedDigits = Array.from(
+			{ length: totalSlots },
+			(_, i) => digits[i] || ""
+		);
 
-refsBonus.bonusOutput.innerHTML = paddedDigits
-	.map((digit) => `<span class="calculator-digit">${digit}</span>`)
-	.join("");
+		refsBonus.bonusOutput.innerHTML = paddedDigits
+			.map((digit) => `<span class="calculator-digit">${digit}</span>`)
+			.join("");
 
-		const modalDigits = `${localAmount}`.split("");
 		const paddedModalDigits = Array.from(
 			{ length: 4 },
-			(_, i) => modalDigits[i] || ""
+			(_, i) => digits[i] || ""
 		);
 
 		refsBonus.modalText.innerHTML = paddedModalDigits
@@ -181,7 +159,7 @@ refsBonus.bonusOutput.innerHTML = paddedDigits
 
 		refsBonus.bonusText.setAttribute("data-translate", "yourBonus");
 		refsBonus.bonusText.textContent = translateText("yourBonus");
-		refsBonus.bonusMessage.textContent = `${localAmount} ${currencyCode.toUpperCase()} + ${freeSpins} FS`;
+		refsBonus.bonusMessage.textContent = `${localAmount} ${currencyCode} + ${freeSpins} FS`;
 
 		enableBonusButton();
 	} else {

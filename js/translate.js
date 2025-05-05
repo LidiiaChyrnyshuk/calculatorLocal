@@ -4,7 +4,7 @@ const translations = {
 		title: "Введи сумму и узнай",
 		description: "свой бонус",
 		deposit: "Введи сумму",
-		minDeposit: "Минимальный депозит для получения бонуса – 20 USDT.",
+		minDeposit: "Минимальный депозит для получения бонуса – ",
 		yourBonus: "Ваш бонус",
 		bonusButton: "Забрать бонус",
 		checkbox:
@@ -16,7 +16,7 @@ const translations = {
 		title: "Enter the amount and find out",
 		description: "your bonus",
 		deposit: "Enter Amount",
-		minDeposit: "Minimum deposit to receive the bonus – 20 USDT.",
+		minDeposit: "Minimum deposit to receive the bonus – ",
 		yourBonus: " Your bonus",
 		bonusButton: "Claim Bonus",
 		checkbox:
@@ -29,7 +29,7 @@ const translations = {
 		description: "a bónuszod",
 		deposit: "Add meg az összeget",
 		minDeposit:
-			"A bónusz megszerzéséhez szükséges minimális befizetés  – 20 USDT.",
+			"A bónusz megszerzéséhez szükséges minimális befizetés  – ",
 		yourBonus: "A bónuszod",
 		bonusButton: "Bónusz igénylése",
 		checkbox:
@@ -41,7 +41,7 @@ const translations = {
 		title: "Zadej částku a zjisti",
 		description: "svůj bonus",
 		deposit: "Zadejte částku ",
-		minDeposit: "Minimální vklad pro získání bonusu  – 20 USDT.",
+		minDeposit: "Minimální vklad pro získání bonusu  – ",
 		yourBonus: "Zadejte částku",
 		bonusButton: "Získat bonus ",
 		checkbox:
@@ -53,7 +53,7 @@ const translations = {
 		title: "Insira o valor e descubra",
 		description: " o seu bónus",
 		deposit: "Introduz o valor",
-		minDeposit: "Depósito mínimo para receber o bónus  – 20 USDT.",
+		minDeposit: "Depósito mínimo para receber o bónus  – ",
 		yourBonus: "O teu bónus",
 		bonusButton: "Solicita bónus",
 		checkbox:
@@ -65,7 +65,7 @@ const translations = {
 		title: "Tutarı gir ve",
 		description: "bonusunu öğren",
 		deposit: "Tutarı Girin",
-		minDeposit: "Bonusu almak için minimum yatırım – 20 USDT.",
+		minDeposit: "Bonusu almak için minimum yatırım – ",
 		yourBonus: "Bonusunuz",
 		bonusButton: "Bonusu Al",
 		checkbox:
