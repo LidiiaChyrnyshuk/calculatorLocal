@@ -3,7 +3,8 @@ import {
 	getBrowserLanguage,
 	translateText,
 } from "./translate.js";
-import bonuses from "../bonuses.json";
+import { bonuses } from "./bonuses.js";
+
 
 const refsBonus = {
 	depositInput: document.querySelector('[data-ref="deposit"]'),

@@ -667,10 +667,8 @@ function hmrAccept(bundle /*: ParcelRequire */ , id /*: string */ ) {
 }
 
 },{}],"1bQr6":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 var _translateJs = require("./translate.js");
-var _bonusesJson = require("../bonuses.json");
-var _bonusesJsonDefault = parcelHelpers.interopDefault(_bonusesJson);
+var _bonusesJs = require("./bonuses.js");
 const refsBonus = {
     depositInput: document.querySelector('[data-ref="deposit"]'),
     bonusOutput: document.querySelector(".calculator-bonus"),
@@ -728,7 +726,7 @@ function initCurrencyAndCalculateBonus() {
     calculateBonus();
 }
 /* Розрахунок бонусу */ function calculateBonus() {
-    const currentBonuses = (0, _bonusesJsonDefault.default)[currencyCode];
+    const currentBonuses = (0, _bonusesJs.bonuses)[currencyCode];
     if (!currentBonuses) {
         console.warn("\u041D\u0435\u043C\u0430\u0454 \u0431\u043E\u043D\u0443\u0441\u0456\u0432 \u0434\u043B\u044F \u0432\u0430\u043B\u044E\u0442\u0438:", currencyCode);
         return;
@@ -805,9 +803,262 @@ function enableBonusButton() {
     refsBonus.bonusButton.style.color = "rgba(255, 255, 255, 1)";
 }
 
-},{"./translate.js":"goUqX","../bonuses.json":"aWvto","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"aWvto":[function(require,module,exports,__globalThis) {
-module.exports = JSON.parse("{\"USDT\":[{\"min\":20,\"max\":499,\"bonus\":1,\"upto\":1000,\"fs\":80,\"depositNum\":1,\"type\":\"Welcome Bonus\"},{\"min\":500,\"max\":999,\"bonus\":1.1,\"upto\":3000,\"fs\":80,\"depositNum\":1,\"type\":\"Boost Bonus\"},{\"min\":1000,\"max\":3000,\"bonus\":1.25,\"upto\":3000,\"fs\":100,\"depositNum\":1,\"type\":\"High Roller Bonus\"},{\"min\":30,\"max\":999,\"bonus\":1,\"upto\":1000,\"fs\":40,\"depositNum\":2,\"type\":\"Welcome Bonus\"},{\"min\":500,\"max\":1999,\"bonus\":1.1,\"upto\":2000,\"fs\":40,\"depositNum\":2,\"type\":\"Boost Bonus\"},{\"min\":1000,\"max\":3000,\"bonus\":1.25,\"upto\":2000,\"fs\":60,\"depositNum\":2,\"type\":\"High Roller Bonus\"},{\"min\":50,\"max\":999,\"bonus\":0.75,\"upto\":1000,\"fs\":80,\"depositNum\":3,\"type\":\"Welcome Bonus\"},{\"min\":500,\"max\":1999,\"bonus\":0.9,\"upto\":2000,\"fs\":80,\"depositNum\":3,\"type\":\"Boost Bonus\"},{\"min\":1000,\"max\":3000,\"bonus\":1,\"upto\":2000,\"fs\":100,\"depositNum\":3,\"type\":\"High Roller Bonus\"}],\"USD\":[{\"min\":20,\"max\":499,\"bonus\":1,\"upto\":1000,\"fs\":80,\"depositNum\":1,\"type\":\"Welcome Bonus\"},{\"min\":500,\"max\":999,\"bonus\":1.1,\"upto\":3000,\"fs\":80,\"depositNum\":1,\"type\":\"Boost Bonus\"},{\"min\":1000,\"max\":3000,\"bonus\":1.25,\"upto\":3000,\"fs\":100,\"depositNum\":1,\"type\":\"High Roller Bonus\"},{\"min\":30,\"max\":999,\"bonus\":1,\"upto\":1000,\"fs\":40,\"depositNum\":2,\"type\":\"Welcome Bonus\"},{\"min\":500,\"max\":1999,\"bonus\":1.1,\"upto\":2000,\"fs\":40,\"depositNum\":2,\"type\":\"Boost Bonus\"},{\"min\":1000,\"max\":3000,\"bonus\":1.25,\"upto\":2000,\"fs\":60,\"depositNum\":2,\"type\":\"High Roller Bonus\"},{\"min\":50,\"max\":999,\"bonus\":0.75,\"upto\":1000,\"fs\":80,\"depositNum\":3,\"type\":\"Welcome Bonus\"},{\"min\":500,\"max\":1999,\"bonus\":0.9,\"upto\":2000,\"fs\":80,\"depositNum\":3,\"type\":\"Boost Bonus\"},{\"min\":1000,\"max\":3000,\"bonus\":1,\"upto\":2000,\"fs\":100,\"depositNum\":3,\"type\":\"High Roller Bonus\"}],\"EUR\":[{\"min\":18,\"max\":499,\"bonus\":1,\"upto\":1000,\"fs\":80,\"depositNum\":1,\"type\":\"Welcome Bonus\"},{\"min\":500,\"max\":999,\"bonus\":1.1,\"upto\":3000,\"fs\":80,\"depositNum\":1,\"type\":\"Boost Bonus\"},{\"min\":1000,\"max\":3000,\"bonus\":1.25,\"upto\":3000,\"fs\":100,\"depositNum\":1,\"type\":\"High Roller Bonus\"},{\"min\":18,\"max\":999,\"bonus\":1,\"upto\":1000,\"fs\":40,\"depositNum\":2,\"type\":\"Welcome Bonus\"},{\"min\":500,\"max\":1999,\"bonus\":1.1,\"upto\":2000,\"fs\":40,\"depositNum\":2,\"type\":\"Boost Bonus\"},{\"min\":1000,\"max\":3000,\"bonus\":1.25,\"upto\":2000,\"fs\":60,\"depositNum\":2,\"type\":\"High Roller Bonus\"},{\"min\":18,\"max\":999,\"bonus\":0.75,\"upto\":1000,\"fs\":80,\"depositNum\":3,\"type\":\"Welcome Bonus\"},{\"min\":500,\"max\":1999,\"bonus\":0.9,\"upto\":2000,\"fs\":80,\"depositNum\":3,\"type\":\"Boost Bonus\"},{\"min\":1000,\"max\":3000,\"bonus\":1,\"upto\":2000,\"fs\":100,\"depositNum\":3,\"type\":\"High Roller Bonus\"}]}");
+},{"./translate.js":"goUqX","./bonuses.js":"2Scyq"}],"2Scyq":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "bonuses", ()=>bonuses);
+const bonuses = {
+    USDT: [
+        {
+            min: 20,
+            max: 499,
+            bonus: 1.0,
+            upto: 1000,
+            fs: 80,
+            depositNum: 1,
+            type: "Welcome Bonus"
+        },
+        {
+            min: 500,
+            max: 999,
+            bonus: 1.1,
+            upto: 3000,
+            fs: 80,
+            depositNum: 1,
+            type: "Boost Bonus"
+        },
+        {
+            min: 1000,
+            max: 3000,
+            bonus: 1.25,
+            upto: 3000,
+            fs: 100,
+            depositNum: 1,
+            type: "High Roller Bonus"
+        },
+        {
+            min: 30,
+            max: 999,
+            bonus: 1.0,
+            upto: 1000,
+            fs: 40,
+            depositNum: 2,
+            type: "Welcome Bonus"
+        },
+        {
+            min: 500,
+            max: 1999,
+            bonus: 1.1,
+            upto: 2000,
+            fs: 40,
+            depositNum: 2,
+            type: "Boost Bonus"
+        },
+        {
+            min: 1000,
+            max: 3000,
+            bonus: 1.25,
+            upto: 2000,
+            fs: 60,
+            depositNum: 2,
+            type: "High Roller Bonus"
+        },
+        {
+            min: 50,
+            max: 999,
+            bonus: 0.75,
+            upto: 1000,
+            fs: 80,
+            depositNum: 3,
+            type: "Welcome Bonus"
+        },
+        {
+            min: 500,
+            max: 1999,
+            bonus: 0.9,
+            upto: 2000,
+            fs: 80,
+            depositNum: 3,
+            type: "Boost Bonus"
+        },
+        {
+            min: 1000,
+            max: 3000,
+            bonus: 1.0,
+            upto: 2000,
+            fs: 100,
+            depositNum: 3,
+            type: "High Roller Bonus"
+        }
+    ],
+    USD: [
+        {
+            min: 20,
+            max: 499,
+            bonus: 1.0,
+            upto: 1000,
+            fs: 80,
+            depositNum: 1,
+            type: "Welcome Bonus"
+        },
+        {
+            min: 500,
+            max: 999,
+            bonus: 1.1,
+            upto: 3000,
+            fs: 80,
+            depositNum: 1,
+            type: "Boost Bonus"
+        },
+        {
+            min: 1000,
+            max: 3000,
+            bonus: 1.25,
+            upto: 3000,
+            fs: 100,
+            depositNum: 1,
+            type: "High Roller Bonus"
+        },
+        {
+            min: 30,
+            max: 999,
+            bonus: 1.0,
+            upto: 1000,
+            fs: 40,
+            depositNum: 2,
+            type: "Welcome Bonus"
+        },
+        {
+            min: 500,
+            max: 1999,
+            bonus: 1.1,
+            upto: 2000,
+            fs: 40,
+            depositNum: 2,
+            type: "Boost Bonus"
+        },
+        {
+            min: 1000,
+            max: 3000,
+            bonus: 1.25,
+            upto: 2000,
+            fs: 60,
+            depositNum: 2,
+            type: "High Roller Bonus"
+        },
+        {
+            min: 50,
+            max: 999,
+            bonus: 0.75,
+            upto: 1000,
+            fs: 80,
+            depositNum: 3,
+            type: "Welcome Bonus"
+        },
+        {
+            min: 500,
+            max: 1999,
+            bonus: 0.9,
+            upto: 2000,
+            fs: 80,
+            depositNum: 3,
+            type: "Boost Bonus"
+        },
+        {
+            min: 1000,
+            max: 3000,
+            bonus: 1.0,
+            upto: 2000,
+            fs: 100,
+            depositNum: 3,
+            type: "High Roller Bonus"
+        }
+    ],
+    EUR: [
+        {
+            min: 18,
+            max: 499,
+            bonus: 1.0,
+            upto: 1000,
+            fs: 80,
+            depositNum: 1,
+            type: "Welcome Bonus"
+        },
+        {
+            min: 500,
+            max: 999,
+            bonus: 1.1,
+            upto: 3000,
+            fs: 80,
+            depositNum: 1,
+            type: "Boost Bonus"
+        },
+        {
+            min: 1000,
+            max: 3000,
+            bonus: 1.25,
+            upto: 3000,
+            fs: 100,
+            depositNum: 1,
+            type: "High Roller Bonus"
+        },
+        {
+            min: 18,
+            max: 999,
+            bonus: 1.0,
+            upto: 1000,
+            fs: 40,
+            depositNum: 2,
+            type: "Welcome Bonus"
+        },
+        {
+            min: 500,
+            max: 1999,
+            bonus: 1.1,
+            upto: 2000,
+            fs: 40,
+            depositNum: 2,
+            type: "Boost Bonus"
+        },
+        {
+            min: 1000,
+            max: 3000,
+            bonus: 1.25,
+            upto: 2000,
+            fs: 60,
+            depositNum: 2,
+            type: "High Roller Bonus"
+        },
+        {
+            min: 18,
+            max: 999,
+            bonus: 0.75,
+            upto: 1000,
+            fs: 80,
+            depositNum: 3,
+            type: "Welcome Bonus"
+        },
+        {
+            min: 500,
+            max: 1999,
+            bonus: 0.9,
+            upto: 2000,
+            fs: 80,
+            depositNum: 3,
+            type: "Boost Bonus"
+        },
+        {
+            min: 1000,
+            max: 3000,
+            bonus: 1.0,
+            upto: 2000,
+            fs: 100,
+            depositNum: 3,
+            type: "High Roller Bonus"
+        }
+    ]
+};
 
-},{}]},["eYIK3","1bQr6"], "1bQr6", "parcelRequireff1f", {})
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}]},["eYIK3","1bQr6"], "1bQr6", "parcelRequireff1f", {})
 
 //# sourceMappingURL=calculatorLocal.f3ed6877.js.map
