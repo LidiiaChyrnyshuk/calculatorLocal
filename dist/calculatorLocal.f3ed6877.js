@@ -749,7 +749,7 @@ function initCurrencyAndCalculateBonus() {
     const minDeposit = Math.min(...currentBonuses.filter((b)=>b.depositNum === 1).map((b)=>b.min));
     if (deposit < minDeposit) {
         refsBonus.bonusText.setAttribute("data-translate", "minDeposit");
-        refsBonus.bonusText.textContent = `${(0, _translateJs.translateText)("minDeposit")} ${minDeposit}`;
+        refsBonus.bonusText.textContent = `${(0, _translateJs.translateText)("minDeposit")} ${minDeposit} ${currencyCode}`;
         refsBonus.bonusMessage.textContent = "";
         clearBonusDisplay();
         disableBonusButton();

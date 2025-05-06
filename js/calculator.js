@@ -34,6 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	const dropdown = document.querySelector(".custom-dropdown");
 	const options = dropdown ? dropdown.querySelector(".options") : null;
 	const currencySelect = refsBonus.currencySelect;
+	
 	const optionItems = dropdown ? dropdown.querySelectorAll(".option") : [];
 
 	if (dropdown && options && currencySelect) {
@@ -119,7 +120,7 @@ function calculateBonus() {
 		refsBonus.bonusText.setAttribute("data-translate", "minDeposit");
 		refsBonus.bonusText.textContent = `${translateText(
 			"minDeposit"
-		)} ${minDeposit}`;
+		)} ${minDeposit} ${currencyCode}`;
 		refsBonus.bonusMessage.textContent = "";
 		clearBonusDisplay();
 		disableBonusButton();
